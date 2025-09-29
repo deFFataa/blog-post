@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Post;
+use App\Notifications\PostNotification;
 
 class PostObserver
 {
@@ -24,6 +25,10 @@ class PostObserver
             ->body('Content here')
             ->success()
             ->sendToDatabase($post->getSubscribers());
+
+        foreach($post->getSubscribers() as $user) {
+            $user->notify(new PostNotification($post));
+        }
     }
 
     /**
